@@ -13,7 +13,7 @@ export class CreateUserDto implements User {
    * User email
    * @example "user@example.com"
    */
-  @IsEmail({ message: 'Must be an e-mail' })
+  @IsEmail()
   email: string;
 
   /**

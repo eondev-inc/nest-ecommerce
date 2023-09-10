@@ -206,7 +206,6 @@ describe('ProductService', () => {
       expect(prismaService.product.findUnique).toHaveBeenCalledWith({
         where: { id: 'a2f891a5-4f1f-43e9-92d4-7d8e9de2bf7c' },
         include: { categories: { select: { name: true } } },
-        rejectOnNotFound: true,
       });
     });
   });
@@ -222,7 +221,6 @@ describe('ProductService', () => {
       expect(prismaService.product.findUnique).toHaveBeenCalledWith({
         where: { urlName: 'brand1-black-wheelchair' },
         include: { categories: { select: { name: true } } },
-        rejectOnNotFound: true,
       });
     });
   });

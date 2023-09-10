@@ -23,7 +23,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
    * https://docs.nestjs.com/recipes/prisma
    */
   async enableShutdownHooks(app: INestApplication): Promise<void> {
-    this.$on('beforeExit', async () => {
+    process.on('beforeExit', async () => {
       await app.close();
     });
   }

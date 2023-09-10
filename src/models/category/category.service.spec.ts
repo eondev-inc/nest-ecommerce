@@ -145,7 +145,7 @@ describe('CategoryService', () => {
       expect(prismaService.category.findUnique).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { id: 'ec3b4cfc-5028-47c2-b631-970088efae5e' },
-          rejectOnNotFound: true,
+          
         }),
       );
     });
@@ -169,7 +169,7 @@ describe('CategoryService', () => {
               take: 20,
             },
           },
-          rejectOnNotFound: true,
+          
         }),
       );
     });
@@ -184,7 +184,7 @@ describe('CategoryService', () => {
       expect(prismaService.category.findUnique).toHaveBeenLastCalledWith(
         expect.objectContaining({
           where: { name: 'Madeira' },
-          rejectOnNotFound: true,
+          
         }),
       );
     });
@@ -197,7 +197,7 @@ describe('CategoryService', () => {
       expect(prismaService.category.findUnique).toHaveBeenLastCalledWith(
         expect.objectContaining({
           where: { name: 'Madeira' },
-          rejectOnNotFound: true,
+          
         }),
       );
     });
@@ -222,7 +222,7 @@ describe('CategoryService', () => {
               take: 20,
             },
           },
-          rejectOnNotFound: true,
+          
         }),
       );
     });

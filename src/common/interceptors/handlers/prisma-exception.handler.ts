@@ -1,13 +1,12 @@
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { PrismaError } from 'prisma-error-enum';
 import { CategoryNameInUseException } from 'src/common/exceptions/category/category-name-in-use.exception';
 import { CategoryNotFoundException } from 'src/common/exceptions/category/category-not-found.exception';
 import { ProductNameInUseException } from 'src/common/exceptions/product/product-name-in-use.exception';
 import { ProductNotFoundException } from 'src/common/exceptions/product/product-not-found.exception';
 import { PurchaseNotFoundException } from 'src/common/exceptions/purchase/purchase-not-found.exception';
-import { EmailInUseException } from 'src/common/exceptions/user/email-in-use.exception';
 import { UserNotFoundException } from 'src/common/exceptions/user/user-not-found.exception';
 import { ExceptionHandler } from './exception.handler';
+import { PrismaClientUnknownRequestError } from '@prisma/client/runtime/library';
 
 /** Catches Prisma ORM errors and throws the
  * respective HTTP error
@@ -17,13 +16,9 @@ export class PrismaExceptionHandler implements ExceptionHandler {
    * respective HTTP error
    */
   handle(error: Error): void {
-    if (error instanceof PrismaClientKnownRequestError) {
-      switch (error.code) {
+    if (error instanceof PrismaClientUnknownRequestError) {
+      switch (error.stack.split('\n')[0].split(':')[0]) {
         case PrismaError.UniqueConstraintViolation:
-          if (this.isEmailConstraintViolation(error.meta)) {
-            throw new EmailInUseException();
-          }
-
           if (this.isProductNameConstraintViolation(error)) {
             throw new ProductNameInUseException();
           }
@@ -95,32 +90,32 @@ export class PrismaExceptionHandler implements ExceptionHandler {
 
   /** Returns wether the error happened in the product name field or not */
   private isProductNameConstraintViolation(
-    error: PrismaClientKnownRequestError,
+    error: PrismaClientUnknownRequestError,
   ): boolean {
     return (
-      (Object.values(error.meta)[0][0] === 'name' ||
-        Object.values(error.meta)[0][0] === 'urlName') &&
+      (Object.values(error.stack)[0][0] === 'name' ||
+        Object.values(error.stack)[0][0] === 'urlName') &&
       error.message.includes('prisma.product')
     );
   }
 
   /** Returns wether the error happened in the category name field or not */
   private isCategoryNameConstraintViolation(
-    error: PrismaClientKnownRequestError,
+    error: PrismaClientUnknownRequestError,
   ): boolean {
     return (
-      Object.values(error.meta)[0][0] === 'name' &&
+      Object.values(error.stack)[0][0] === 'name' &&
       error.message.includes('prisma.category')
     );
   }
 
   /** Returns wether the error happened on an user prisma query or not */
-  private isUserError(error: PrismaClientKnownRequestError): boolean {
+  private isUserError(error: PrismaClientUnknownRequestError): boolean {
     return error.message.includes('prisma.user');
   }
 
   /** Returns wether the error happened on an update or delete product prisma query or not */
-  private isProductError(error: PrismaClientKnownRequestError): boolean {
+  private isProductError(error: PrismaClientUnknownRequestError): boolean {
     return (
       error.message.includes('prisma.product.update') ||
       error.message.includes('prisma.product.delete')
@@ -128,17 +123,19 @@ export class PrismaExceptionHandler implements ExceptionHandler {
   }
 
   /** Returns wether the error happened on an create product prisma query or not */
-  private isCreateProductError(error: PrismaClientKnownRequestError): boolean {
+  private isCreateProductError(
+    error: PrismaClientUnknownRequestError,
+  ): boolean {
     return error.message.includes('prisma.product.create');
   }
 
   /** Returns wether the error happened on an category prisma query or not */
-  private isCategoryError(error: PrismaClientKnownRequestError): boolean {
+  private isCategoryError(error: PrismaClientUnknownRequestError): boolean {
     return error.message.includes('prisma.category');
   }
 
   /** Returns wether the error happened on an purchase prisma query or not */
-  private isPurchaseError(error: PrismaClientKnownRequestError): boolean {
+  private isPurchaseError(error: PrismaClientUnknownRequestError): boolean {
     return error.message.includes('prisma.purchase');
   }
 }

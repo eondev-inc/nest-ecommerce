@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Category, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { FindProductsDto } from './dto/find-products.dto';
@@ -31,7 +31,9 @@ export class ProductService {
         urlName,
         categories,
       },
-      include: { categories: { select: { name: true } } },
+      include: {
+        categories: { select: { name: true } },
+      },
     });
 
     return product;
@@ -72,7 +74,6 @@ export class ProductService {
     return this.prisma.product.findUnique({
       where: { id },
       include: { categories: { select: { name: true } } },
-      rejectOnNotFound: true,
     });
   }
 
@@ -81,7 +82,6 @@ export class ProductService {
     return this.prisma.product.findUnique({
       where: { urlName },
       include: { categories: { select: { name: true } } },
-      rejectOnNotFound: true,
     });
   }
 
@@ -93,10 +93,15 @@ export class ProductService {
     if (updateProductDto.name) {
       return this.updateProductAndUrlName(id, updateProductDto);
     }
-
     return this.prisma.product.update({
       where: { id },
-      data: { ...updateProductDto },
+      data: {
+        basePrice: updateProductDto.basePrice,
+        description: updateProductDto.description,
+        categories: this.connectCategoriesById(updateProductDto.categories),
+        name: updateProductDto.name,
+        stock: updateProductDto.stock,
+      },
     });
   }
 
@@ -134,7 +139,14 @@ export class ProductService {
 
     return this.prisma.product.update({
       where: { id },
-      data: { ...updateProductDto, urlName },
+      data: {
+        basePrice: updateProductDto.basePrice,
+        description: updateProductDto.description,
+        categories: this.connectCategoriesById(updateProductDto.categories),
+        name: updateProductDto.name,
+        stock: updateProductDto.stock,
+        urlName,
+      },
     });
   }
 
@@ -142,14 +154,14 @@ export class ProductService {
    * Format the categories IDs array into the prisma query way
    */
   private connectCategoriesById(
-    categories: string[],
+    categories: Category[],
   ): Prisma.CategoryUncheckedCreateNestedManyWithoutProductsInput {
     let categoriesConnection = { connect: [] };
 
     if (categories) {
       categoriesConnection = {
         connect: categories.map((category) => {
-          return { id: category };
+          return { id: category.id };
         }),
       };
     }

@@ -203,7 +203,6 @@ describe('PurchaseService', () => {
       expect(prismaService.purchase.findUnique).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { id: purchase2Id },
-          rejectOnNotFound: true,
         }),
       );
     });
@@ -221,7 +220,6 @@ describe('PurchaseService', () => {
       expect(prismaService.purchase.findUnique).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { id: purchase2Id },
-          rejectOnNotFound: true,
         }),
       );
     });
@@ -246,7 +244,6 @@ describe('PurchaseService', () => {
 
       expect(prismaService.purchase.findUnique).toBeCalledWith({
         where: { id: purchase3Id },
-        rejectOnNotFound: true,
       });
 
       expect(prismaService.purchase.update).toBeCalledWith(

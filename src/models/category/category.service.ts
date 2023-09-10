@@ -67,7 +67,6 @@ export class CategoryService {
           take: offset,
         },
       },
-      rejectOnNotFound: true,
     });
 
     return category;
@@ -92,7 +91,6 @@ export class CategoryService {
           take: offset,
         },
       },
-      rejectOnNotFound: true,
     });
 
     return category;

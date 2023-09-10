@@ -1,5 +1,4 @@
 import { OmitType } from '@nestjs/swagger';
-import { Decimal } from '@prisma/client/runtime';
 import {
   IsArray,
   IsInt,
@@ -9,6 +8,8 @@ import {
   IsString,
 } from 'class-validator';
 import { Product } from '../entities/product.entity';
+import { Decimal } from '@prisma/client/runtime/library';
+import { Category } from '@prisma/client';
 
 /** Describes the fields needed to create a Product */
 export class CreateProductDto extends OmitType(Product, [
@@ -64,5 +65,5 @@ export class CreateProductDto extends OmitType(Product, [
    */
   @IsOptional()
   @IsArray()
-  categories?: string[];
+  categories?: Category[];
 }

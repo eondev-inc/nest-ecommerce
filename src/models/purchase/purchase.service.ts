@@ -82,7 +82,6 @@ export class PurchaseService {
         user: { select: { email: true } },
         product: { select: { name: true } },
       },
-      rejectOnNotFound: true,
     });
 
     if (userRole !== Role.ADMIN && purchase.userId !== userId) {
@@ -100,7 +99,6 @@ export class PurchaseService {
   ): Promise<Purchase> {
     const purchase = await this.prisma.purchase.findUnique({
       where: { id: purchaseId },
-      rejectOnNotFound: true,
     });
 
     if (userId !== purchase.userId) {
